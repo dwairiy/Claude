@@ -3,12 +3,8 @@
 > Brand: **AL Mohib Trading / المهيب التجارية** (client logo: `brand/al_mohib_logo.png`)
 > Product: invented for this portfolio film. It is modelled on the premium slimline system-aluminium category, not on any specific competitor product.
 
-## ⚠ Brand note to resolve before anything is printed
-The Arabic and English names on the logo don't match:
-- **المهيب** reads *Al-Muhīb / Al-Mahīb* ("the revered, the formidable").
-- **"Mohib"** in English would normally be written **محب / المحب** ("the loving one").
-
-Pick one and align both scripts. If المهيب is correct, use **"AL MUHIB"** or **"AL MAHEEB"** in English. Every super, end card and voiceover in the film depends on this choice.
+## Brand name: locked
+English: **AL Mohib** (client decision). Arabic: **المهيب التجارية**, as on the logo. Arabic voiceover reads the Arabic as written. English voiceover and supers use "AL Mohib".
 
 ---
 
