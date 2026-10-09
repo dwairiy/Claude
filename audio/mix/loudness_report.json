@@ -1,0 +1,33 @@
+{
+  "broadcast": {
+    "LUFS": -22.99,
+    "dBTP": -7.23
+  },
+  "web": {
+    "LUFS": -14.05,
+    "dBTP": -1.42
+  },
+  "segments_LUFS_web": {
+    "act1_chaos": -13.7,
+    "hit_and_slide": -14.0,
+    "post_seal": -25.1,
+    "calm": -26.2,
+    "logo": -20.3
+  },
+  "sfx_library": [
+    "siren_wail",
+    "siren_yelp",
+    "motorbike_pass",
+    "tire_screech",
+    "car_horn",
+    "bank_alarm_bell",
+    "helicopter",
+    "jackhammer",
+    "city_traffic_bed",
+    "whoosh",
+    "window_slide",
+    "window_seal_thunk",
+    "multipoint_lock",
+    "room_tone"
+  ]
+}
