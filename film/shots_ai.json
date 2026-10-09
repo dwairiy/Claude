@@ -1,0 +1,32 @@
+{
+  "style": "Cinematic live-action TV commercial frame, shot on ARRI Alexa with anamorphic-look long lenses, Riyadh business district at hard midday sun, teal-steel colour grade with crushed blacks and warm skin tones, heat haze, subtle film grain, photorealistic, 16:9. No text, no logos, no real brands, no police or government insignia.",
+  "interior_style": "Cinematic live-action TV commercial frame, contemporary Najdi-modern penthouse on the 20th floor in Riyadh, warm limestone, low majlis seating, floor-to-ceiling slim matte-black aluminium sliding glass wall with 20 mm frames, warm sand colour grade, soft film grain, photorealistic, 16:9. No text, no logos.",
+  "characters": {
+    "rider": "stunt rider in full black leathers and a mirrored black helmet (face never visible) on a black superbike",
+    "director": "film director in his 40s, navy cap, aviator sunglasses, beige vest, holding a white megaphone",
+    "grandfather": "Saudi grandfather in his early 70s, kind eyes, short white beard, white thobe and white taqiyah",
+    "girl": "Saudi girl aged 8, dark hair tied back, simple cream home dress, deeply focused"
+  },
+  "negative": "text, captions, watermark, logo, cartoon, CGI look, distorted hands, extra fingers, warped faces, gun, weapon",
+  "shots": {
+    "02": {"keyframe": "Wide long-lens shot down a glass-tower boulevard: the {rider} blasts toward camera; a parked car's hazard lights flash; a white patrol SUV with generic blue-red light bar swings out from the kerb behind.", "motion": "The superbike races toward and past camera left; the SUV pulls out and accelerates after it; slight long-lens heat shimmer; camera pans with the bike."},
+    "03": {"keyframe": "Medium shot through a windscreen line of gridlocked cars on a Riyadh avenue, a frustrated driver in a white thobe leans on the horn, another driver throws both hands up.", "motion": "Drivers gesture in exasperation, horns pressed, cars inch forward, handheld energy."},
+    "05": {"keyframe": "Low tracking shot at road level: the {rider} leans the superbike into acceleration, front wheel lifting slightly, motion-blurred asphalt and towers.", "motion": "Camera tracks low alongside then whips to follow as the bike accelerates hard past the lens, strong motion blur."},
+    "07": {"keyframe": "High drone view of a circular roundabout with an olive tree at its centre; seven white patrol SUVs with flashing generic light bars drift around it in a comic convoy.", "motion": "Drone slowly orbits as the SUVs drift around the roundabout one after another, tyre smoke."},
+    "08": {"keyframe": "Medium shot on a sunny sidewalk: a Saudi businessman in a crisp white thobe and shemagh presses a phone to one ear and jams a finger in the other, shouting.", "motion": "He shouts into the phone, wincing at the noise, passers-by and traffic behind."},
+    "09": {"keyframe": "Medium close-up of a construction worker in a hard hat operating a jackhammer on a road, dust bursting up, orange barriers.", "motion": "Jackhammer pounds rhythmically, dust and debris spray, static camera."},
+    "11": {"keyframe": "Wide low-angle shot between two glass towers: a white news helicopter rises into frame; its downwash whips a shemagh off a surprised passer-by in the foreground.", "motion": "The helicopter rises and fills the frame, the shemagh flies off and flutters away, camera tilts up."},
+    "12": {"keyframe": "Medium tracking shot: the {rider} splits lanes between two city buses, travelling right to left.", "motion": "The bike threads quickly between the buses from right to left, camera tracking alongside."},
+    "13": {"keyframe": "Rapid-montage frame: laundry on a rooftop line thrashing in helicopter downwash against glass towers.", "motion": "Laundry whips violently in the wind, dust swirling."},
+    "14": {"keyframe": "Wide crane shot revealing a film set on the boulevard: camera cranes, big film lights, a crew, and a stunt ramp; the {director} raises a megaphone; the {rider} lines up at the far end of the ramp.", "motion": "Camera cranes up to reveal the set; the director lifts the megaphone and shouts; the bike launches toward the ramp."},
+    "15": {"keyframe": "Wide shot, backlit by a low sun: the {rider} is airborne off a ramp in front of a tall glass tower, silhouetted, slow-motion feel.", "motion": "The bike soars through the air in slow motion, silhouette against the sun, lens flare."}
+  },
+  "live_placeholders": {
+    "04": {"keyframe": "Medium two-shot in the penthouse: the {grandfather} gently guides the fingers of the {girl} on a bamboo reed pen at a low wooden writing desk beside the wide-open sliding glass wall; a sheer curtain whips in the wind; city towers outside.", "motion": "The curtain billows; the girl begins writing carefully; the grandfather steadies her hand; slow push in."},
+    "06": {"keyframe": "Extreme close-up of a child's hand holding a reed pen on cream paper; the black ink line wobbles.", "motion": "The pen wobbles slightly as she flinches, ink line trembling."},
+    "10": {"keyframe": "Close-up of the {girl} wincing and covering one ear at the desk; a drop of black ink falls from the pen onto the paper; the {grandfather} turns his head toward the window behind her.", "motion": "She winces and covers her ear, an ink blot falls, the grandfather slowly turns to look at the window."},
+    "18": {"keyframe": "Close-up of a weathered elderly hand turning a slim matte-black aluminium window handle.", "motion": "The hand turns the handle firmly downward, locking the window."},
+    "19": {"keyframe": "Locked-off wide interior: the {grandfather} and the {girl} sit perfectly still at the desk in golden light, dust motes floating; behind them, through the closed floor-to-ceiling glass wall, a film crew runs and a news helicopter hovers silently.", "motion": "Inside, stillness and floating dust; outside the glass, distant figures run and the helicopter hovers."},
+    "21": {"keyframe": "Medium close-up two-shot in golden backlight: the {girl} looks up proudly from her paper; the {grandfather} smiles with eyes closed; behind them through the glass, the {director} on the street below shouts into a megaphone.", "motion": "The girl looks up and smiles, the grandfather smiles serenely; outside, the director shouts silently."}
+  }
+}
