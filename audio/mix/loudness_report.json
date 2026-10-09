@@ -1,18 +1,89 @@
 {
-  "broadcast": {
-    "LUFS": -22.99,
-    "dBTP": -7.23
+  "ME": {
+    "broadcast": {
+      "LUFS": -22.99,
+      "dBTP": -6.97
+    }
   },
-  "web": {
-    "LUFS": -14.05,
-    "dBTP": -1.42
+  "AR": {
+    "broadcast": {
+      "LUFS": -23.0,
+      "dBTP": -7.02
+    },
+    "web": {
+      "LUFS": -14.05,
+      "dBTP": -1.42
+    },
+    "segments_LUFS_web": {
+      "act1_chaos": -13.5,
+      "hit_and_slide": -13.8,
+      "post_seal": -24.9,
+      "calm_with_vo": -17.1,
+      "logo": -20.6
+    },
+    "vo_lines_s": [
+      [
+        22.5,
+        22.92,
+        "MEGAPHONE"
+      ],
+      [
+        26.8,
+        29.22,
+        "VO1"
+      ],
+      [
+        29.52,
+        31.5,
+        "VO2"
+      ],
+      [
+        31.75,
+        32.79,
+        "VO3"
+      ]
+    ],
+    "vo_over_music_LU": 9.2
   },
-  "segments_LUFS_web": {
-    "act1_chaos": -13.7,
-    "hit_and_slide": -14.0,
-    "post_seal": -25.1,
-    "calm": -26.2,
-    "logo": -20.3
+  "EN": {
+    "broadcast": {
+      "LUFS": -23.0,
+      "dBTP": -7.07
+    },
+    "web": {
+      "LUFS": -14.07,
+      "dBTP": -1.42
+    },
+    "segments_LUFS_web": {
+      "act1_chaos": -13.5,
+      "hit_and_slide": -13.8,
+      "post_seal": -24.9,
+      "calm_with_vo": -17.7,
+      "logo": -20.9
+    },
+    "vo_lines_s": [
+      [
+        22.5,
+        22.92,
+        "MEGAPHONE"
+      ],
+      [
+        26.8,
+        28.8,
+        "VO1"
+      ],
+      [
+        29.2,
+        30.31,
+        "VO2"
+      ],
+      [
+        30.66,
+        31.56,
+        "VO3"
+      ]
+    ],
+    "vo_over_music_LU": 9.0
   },
   "sfx_library": [
     "siren_wail",
@@ -28,6 +99,9 @@
     "window_slide",
     "window_seal_thunk",
     "multipoint_lock",
-    "room_tone"
+    "room_tone",
+    "qalam_stroke",
+    "qalam_nib_tap",
+    "ink_drip"
   ]
 }

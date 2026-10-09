@@ -31,8 +31,13 @@ T_SLIDE = 24.2      # sash starts to slide
 T_SEAL = 25.0       # sash seals -> outside world collapses
 T_LOCK = 25.45      # multipoint lock engages
 T_CALM = 26.2       # calm cue enters
-VO_IN, VO_OUT = 27.0, 32.0
+VO_IN = 26.8       # first VO line; the qalam scratch plays alone before it
+VO_LATEST_END = 32.95  # "By AL Mohib" must finish before the logo's seal
 T_LOGO = 32.4       # sonic logo (slide + seal + chime)
+T_MEGA = 22.5       # director's megaphone: "Action!"
+T_BLOT = 16.0       # ink blot falls (music ducks)
+INTERIOR_SHOTS = [(5.0, 7.5), (10.5, 11.0), (15.5, 17.0)]  # Act 1 cuts inside, window still open
+VO_GAPS = {"ar": (0.3, 0.25), "en": (0.4, 0.35)}  # Arabic lines run longer
 
 
 class Track:
@@ -214,12 +219,86 @@ PADS = [  # (start, end, voicing)
 
 
 def act3_music():
-    tr = Track()
+    """Returns (piano, pad) separately so the pad can duck under the VO."""
+    piano, pad = Track(), Track()
     for t0, m, v in PIANO:
-        tr.add(s.felt_piano(m, 4.0, v), t0, -6, (m - 60) / 60)
+        piano.add(s.felt_piano(m, 4.0, v), t0, -6, (m - 60) / 60)
     for t0, t1, voicing in PADS:
-        tr.add(s.pad_chord(voicing, t1 - t0, attack=min(1.4, (t1 - t0) / 2), release=min(1.6, (t1 - t0) / 2)), t0, -14)
-    return s.reverb(tr.buf, s.make_ir(3.2, predelay=0.025, damp=5000, seed=9), 0.35)
+        pad.add(s.pad_chord(voicing, t1 - t0, attack=min(1.4, (t1 - t0) / 2), release=min(1.6, (t1 - t0) / 2)), t0, -14)
+    ir = s.make_ir(3.2, predelay=0.025, damp=5000, seed=9)
+    return s.reverb(piano.buf, ir, 0.35), s.reverb(pad.buf, ir, 0.35)
+
+
+# ================================================================ script revisions (v2)
+def _mask(spans, ramp=0.06):
+    """0..1 envelope that is 1 inside the given time spans, with short ramps."""
+    t = np.arange(n_samples(DUR)) / SR
+    m = np.zeros_like(t)
+    for a, b in spans:
+        m = np.maximum(m, np.clip(np.minimum((t - a) / ramp + 1, (b - t) / ramp + 1), 0, 1))
+    return m[:, None]
+
+
+def interior_perspective(fx):
+    """Act 1 interior cuts: the city heard through the open window, about 3 dB down with some room."""
+    m = _mask(INTERIOR_SHOTS)
+    roomy = s.reverb(fx, s.make_ir(0.6, predelay=0.008, damp=5000, seed=21), 0.3)
+    return (1 - m) * fx + m * db(-3) * roomy
+
+
+def blot_duck(x):
+    """Comic beat: the score catches its breath as the ink blot lands."""
+    return x * db(-9 * _mask([(T_BLOT - 0.03, T_BLOT + 0.4)], ramp=0.04))
+
+
+def pen_foley():
+    tr = Track()
+    # Act 1: the first letter (seen), mostly masked by the city
+    tr.add(s.nib_tap(), 5.4, -6)
+    for t0 in (5.45, 5.75, 6.05):  # the three teeth of the letter sin
+        tr.add(s.qalam_stroke(0.22, [0, 0.11, 0.22], [0.3, 0.7, 0]), t0, -4)
+    tr.add(s.qalam_stroke(0.5, [0, 0.1, 0.2, 0.3, 0.5], [0.4, 0.9, 0.2, 0.8, 0]), 10.5, -4)  # the wobble
+    tr.add(s.ink_drip(), T_BLOT, -2, 0.1)
+    # Act 3: the steady stroke, then the dots of the word (two under ya, one over nun, two over ta marbuta)
+    tr.add(s.nib_tap(), 26.3, -4)
+    tr.add(s.qalam_stroke(2.53, [0, 0.3, 1.0, 1.7, 2.2, 2.53], [0.15, 0.5, 0.9, 0.7, 0.4, 0]), 26.32, 0, 0.1)
+    for t0 in (28.95, 29.08, 29.35, 29.48, 29.75):
+        tr.add(s.nib_tap(), t0, -5, 0.1)
+    return s.reverb(tr.buf, s.make_ir(0.45, predelay=0.005, damp=7000, seed=7), 0.06)
+
+
+def _load_vo(name):
+    x, sr = sf.read(OUT / "vo" / f"{name}.wav")
+    x = x if x.ndim == 1 else x.mean(1)
+    idx = np.nonzero(np.abs(x) > 0.02 * np.max(np.abs(x)))[0]  # trim TTS silence
+    return x[max(idx[0] - 200, 0):idx[-1] + int(0.12 * sr)], sr
+
+
+def dialogue(lang):
+    """VO lines laid back to back from VO_IN, plus the megaphone. Returns (megaphone, vo, [(start, end, label)])."""
+    mega_tr, tr = Track(), Track()
+    marks = []
+    mega, sr = _load_vo("en_megaphone")
+    mega_tr.add(s.reverb(s.megaphone(mega, sr), s.make_ir(0.8, predelay=0.03, damp=4000, seed=5), 0.2), T_MEGA, 0, -0.2)
+    marks.append((T_MEGA, T_MEGA + len(mega) / sr * 112 / 100, "MEGAPHONE"))
+    t = VO_IN
+    for k in (1, 2, 3):
+        x, sr = _load_vo(f"{lang}_vo{k}")
+        x = s.hp(signal.resample_poly(x, SR, sr), 80)
+        tr.add(s.reverb(x, s.make_ir(0.35, predelay=0.004, damp=8000, seed=31), 0.05), t, 0)
+        marks.append((t, t + len(x) / SR, f"VO{k}"))
+        t += len(x) / SR + (VO_GAPS[lang][k - 1] if k < 3 else 0)
+    if marks[-1][1] > VO_LATEST_END:
+        raise SystemExit(f"{lang} VO overruns: ends {marks[-1][1]:.2f}s > {VO_LATEST_END}s; tighten gaps or length_scale")
+    return mega_tr.buf, tr.buf, marks
+
+
+def duck_under(x, key, depth_db=-3.0):
+    """Side-chain: pull x down by depth_db while the key signal (VO) is speaking."""
+    env = signal.lfilter([1 - 0.9993], [1, -0.9993], np.abs(key).max(1))
+    gate = np.clip(env / (0.25 * env.max()), 0, 1)
+    gate = signal.lfilter([1 - 0.9995], [1, -0.9995], gate)  # smooth release
+    return x * db(depth_db * gate)[:, None]
 
 
 def sonic_logo(t0=0.0, track=None):
@@ -290,13 +369,15 @@ def export_sfx_library():
         "helicopter": s.helicopter(4.0), "jackhammer": s.jackhammer(3.0), "city_traffic_bed": s.traffic(6.0),
         "whoosh": s.whoosh(1.2), "window_slide": s.window_slide(0.95), "window_seal_thunk": s.seal_thunk(),
         "multipoint_lock": s.lock_clicks(), "room_tone": s.room_tone(5.0),
+        "qalam_stroke": s.qalam_stroke(2.53, [0, 0.3, 1.0, 1.7, 2.2, 2.53], [0.15, 0.5, 0.9, 0.7, 0.4, 0]),
+        "qalam_nib_tap": s.nib_tap(), "ink_drip": s.ink_drip(),
     }
     for name, x in lib.items():
         write(OUT / "sfx" / f"{name}.wav", s.norm(x, db(-3)))
     return list(lib)
 
 
-def timeline_png(mix, path):
+def timeline_png(mix, path, vo_marks, version):
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -325,10 +406,13 @@ def timeline_png(mix, path):
         for ax in (ax1, ax2):
             ax.axvline(x, color="#e9dcc6", lw=0.8, alpha=0.6)
         ax1.text(x + 0.15, 1.02, label, transform=ax1.get_xaxis_transform(), color="#e9dcc6", fontsize=11)
-    ax1.axvspan(VO_IN, VO_OUT, color="#0b4fb3", alpha=0.25)
-    ax1.text(VO_IN + 0.1, 0.05, "VO slot", transform=ax1.get_xaxis_transform(), color="#9ec0ff", fontsize=10)
-    fig.text(L, 0.92, "AL MOHIB · SAKINA — Original Score & Sound Design (temp mix v1)", color="white", fontsize=22, weight="bold")
-    fig.text(L, 0.885, "All of the view. None of the noise.", color="#9aa4b8", fontsize=14)
+    for a, b, label in vo_marks:
+        ax1.axvspan(a, b, color="#0b4fb3", alpha=0.35)
+        ax1.text(a + 0.05, 0.05, label, transform=ax1.get_xaxis_transform(), color="#9ec0ff", fontsize=9)
+    ax1.text(T_BLOT + 0.05, 0.9, "ink blot", transform=ax1.get_xaxis_transform(), color="#9ec0ff", fontsize=9)
+    ax1.text(26.3, 0.9, "qalam", transform=ax1.get_xaxis_transform(), color="#9ec0ff", fontsize=9)
+    fig.text(L, 0.92, f"AL Mohib · SAKINA · 'The First Word' — Soundtrack v2 ({version})", color="white", fontsize=22, weight="bold")
+    fig.text(L, 0.885, "All of the view. None of the noise.  ·  Scratch VO (TTS guide) — replace with cast talent", color="#9aa4b8", fontsize=14)
     fig.savefig(path, facecolor=fig.get_facecolor())
     plt.close(fig)
     return L, W
@@ -343,55 +427,88 @@ def preview_mp4(png, wav, mp4, L, W):
                     "-crf", "20", "-c:a", "aac", "-b:a", "256k", "-t", str(DUR), str(mp4)], check=True)
 
 
+def mp3(wav):
+    out = wav.with_suffix(".mp3")
+    subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", str(wav), "-b:a", "320k", str(out)], check=True)
+    return out
+
+
 def main():
     print("rendering act 1 music ...")
     m1 = act1_music()
     print("rendering exterior sfx ...")
     fx = exterior_sfx()
-    print("rendering interior foley, act 3, logo ...")
+    print("rendering foley, act 3, logo, dialogue ...")
     fol = interior_foley()
-    m3 = act3_music()
+    pen = pen_foley()
+    piano, pad = act3_music()
     logo = sonic_logo(T_LOGO).buf
 
-    # balance (loudness targets inside each stem's working window), then the window automation
-    m1 = window_closes(level(m1, 2, T_HIT, -20))
-    fx = window_closes(level(fx, 2, T_HIT, -23))
+    # balance (loudness targets inside each stem's working window), then the script automation
+    m1 = window_closes(blot_duck(level(m1, 2, T_HIT, -20)))
+    fx = window_closes(interior_perspective(level(fx, 2, T_HIT, -23)))
     fol = level(fol, T_SLIDE, T_SEAL + 0.6, -21)
-    m3 = level(m3, T_CALM, T_LOGO, -31)
+    pen = level(pen, 26.3, 28.85, -31)
+    g3 = db(-31 - lufs((piano + pad)[n_samples(T_CALM):n_samples(T_LOGO)]))
+    piano, pad = piano * g3, pad * g3
     logo = level(logo, T_LOGO, DUR, -27)
-    fade = np.interp(np.arange(n_samples(DUR)) / SR, [0, DUR - 0.8, DUR], [1, 1, 0])[:, None]
-    stems = {"music_act1_rush_hour_heist": m1, "sfx_exterior_city": fx, "foley_interior_window": fol,
-             "music_act3_sakina": m3, "sonic_logo": logo}
-    stems = {k: v * fade for k, v in stems.items()}
-    mix = sum(stems.values())
 
+    dlg = {}
+    for lang in ("ar", "en"):
+        mega, vo, marks = dialogue(lang)
+        vo_end = max(e for a, e, l in marks if l.startswith("VO"))
+        dlg[lang] = (level(mega, T_MEGA, T_MEGA + 0.6, -17), level(vo, VO_IN, vo_end, -22), marks)
+
+    fade = np.interp(np.arange(n_samples(DUR)) / SR, [0, DUR - 0.8, DUR], [1, 1, 0])[:, None]
+    me_stems = {"music_act1_rush_hour_heist": m1, "sfx_exterior_city": fx, "foley_interior_window": fol,
+                "foley_pen_and_ink": pen, "music_act3_sakina": piano + pad, "sonic_logo": logo}
+    me_stems = {k: v * fade for k, v in me_stems.items()}
+    stems = dict(me_stems, dialogue_megaphone=dlg["ar"][0] * fade,
+                 dialogue_vo_ar=dlg["ar"][1] * fade, dialogue_vo_en=dlg["en"][1] * fade)
     for k, v in stems.items():
         write(OUT / "stems" / f"{k}.wav", v)
-    broadcast = master(mix, -23.0)
-    web = master(mix, -14.0)
-    write(OUT / "mix" / "sakina_tvc35_temp_mix_broadcast_-23LUFS.wav", broadcast)
-    write(OUT / "mix" / "sakina_tvc35_temp_mix_web_-14LUFS.wav", web)
-    mp3 = OUT / "mix" / "sakina_tvc35_temp_mix_web.mp3"
-    subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", str(OUT / "mix" / "sakina_tvc35_temp_mix_web_-14LUFS.wav"),
-                    "-b:a", "320k", str(mp3)], check=True)
+
+    me = sum(me_stems.values())
+    report = {}
+    mixdir = OUT / "mix"
+    for old in mixdir.glob("*"):
+        old.unlink()
+    me_master = master(me, -23.0)
+    write(mixdir / "sakina_tvc35_ME_broadcast_-23LUFS.wav", me_master)
+    report["ME"] = {"broadcast": {"LUFS": round(lufs(me_master), 2), "dBTP": round(true_peak_db(me_master), 2)}}
+
+    for lang in ("ar", "en"):
+        mega, vo, marks = dlg[lang]
+        # the pad (-3 dB) and the logo's slide (-6 dB) side-chain under the voice; the rest is shared with the M&E
+        mix = (me - me_stems["music_act3_sakina"] - me_stems["sonic_logo"]
+               + (piano + duck_under(pad, vo) + duck_under(logo, vo, -6.0) + mega + vo) * fade)
+        tag = lang.upper()
+        broadcast, web = master(mix, -23.0), master(mix, -14.0)
+        write(mixdir / f"sakina_tvc35_{tag}_broadcast_-23LUFS.wav", broadcast)
+        web_wav = mixdir / f"sakina_tvc35_{tag}_web_-14LUFS.wav"
+        write(web_wav, web)
+        web_mp3 = mp3(web_wav)
+        png = OUT / f"sakina_soundtrack_timeline_{tag}.png"
+        L, W = timeline_png(web, png, marks, f"{'Arabic' if lang == 'ar' else 'English'} version")
+        preview_mp4(png, web_mp3, OUT / f"sakina_soundtrack_preview_{tag}.mp4", L, W)
+        seg = lambda a, b: round(lufs(web[n_samples(a):n_samples(b)]), 1)
+        vo_a, vo_b = marks[1][0], marks[-1][1]
+        report[tag] = {
+            "broadcast": {"LUFS": round(lufs(broadcast), 2), "dBTP": round(true_peak_db(broadcast), 2)},
+            "web": {"LUFS": round(lufs(web), 2), "dBTP": round(true_peak_db(web), 2)},
+            "segments_LUFS_web": {"act1_chaos": seg(0, T_HIT), "hit_and_slide": seg(T_HIT, T_SEAL),
+                                  "post_seal": seg(T_SEAL + 0.3, T_CALM), "calm_with_vo": seg(T_CALM, T_LOGO),
+                                  "logo": seg(T_LOGO, DUR)},
+            "vo_lines_s": [(round(a, 2), round(b, 2), l) for a, b, l in marks],
+            "vo_over_music_LU": round(lufs(vo[n_samples(vo_a):n_samples(vo_b)])
+                                      - lufs((piano + duck_under(pad, vo))[n_samples(vo_a):n_samples(vo_b)]), 1),
+        }
 
     logo_alone = sonic_logo(0.1)
     write(OUT / "sonic_logo" / "al_mohib_sakina_sonic_logo.wav",
           master(logo_alone.buf[:n_samples(3.6)] * np.interp(s.t_axis(3.6), [0, 3.0, 3.6], [1, 1, 0])[:, None], -16.0))
-
-    names = export_sfx_library()
-    L, W = timeline_png(web, OUT / "sakina_soundtrack_timeline.png")
-    preview_mp4(OUT / "sakina_soundtrack_timeline.png", mp3, OUT / "sakina_soundtrack_preview.mp4", L, W)
-
-    report = {
-        "broadcast": {"LUFS": round(lufs(broadcast), 2), "dBTP": round(true_peak_db(broadcast), 2)},
-        "web": {"LUFS": round(lufs(web), 2), "dBTP": round(true_peak_db(web), 2)},
-        "segments_LUFS_web": {name: round(lufs(web[n_samples(a):n_samples(b)]), 1) for name, a, b in
-                               [("act1_chaos", 0, T_HIT), ("hit_and_slide", T_HIT, T_SEAL), ("post_seal", T_SEAL + 0.3, T_CALM),
-                                ("calm", T_CALM, T_LOGO), ("logo", T_LOGO, DUR)]},
-        "sfx_library": names,
-    }
-    (OUT / "mix" / "loudness_report.json").write_text(json.dumps(report, indent=2))
+    report["sfx_library"] = export_sfx_library()
+    (mixdir / "loudness_report.json").write_text(json.dumps(report, indent=2))
     print(json.dumps(report, indent=2))
 
 

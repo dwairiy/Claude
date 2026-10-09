@@ -157,7 +157,7 @@ Already composed (doc 03): *"Rush Hour Heist"* (D minor) gives way to silence, t
 
 ---
 
-## Soundtrack revisions required by this script (v2)
+## Soundtrack revisions required by this script: ✅ done in soundtrack v2 (see doc 03)
 | TC | Change |
 |---|---|
 | 05.0–07.5, 10.5–11, 15.5–17 | Interior shots in Act 1: dip the exterior about 3 dB with a light room reverb (heard through an open window) |
@@ -169,5 +169,5 @@ Already composed (doc 03): *"Rush Hour Heist"* (D minor) gives way to silence, t
 ## Next steps
 1. Approve or revise the treatment and script.
 2. **Storyboard:** 23 frames generated with Nano Banana (needs `GEMINI_API_KEY`), with the real calligraphy composited.
-3. Soundtrack v2 with the revisions above.
+3. ~~Soundtrack v2 with the revisions above.~~ Done.
 4. Shot list and production plan (hybrid AI and live inserts).

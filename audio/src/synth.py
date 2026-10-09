@@ -443,3 +443,42 @@ def lock_clicks():
 
 def room_tone(dur):
     return norm(hp(lp(pink(dur), 350), 25))
+
+
+def qalam_stroke(dur, times, speeds):
+    """Reed pen dragged across paper: stick-slip micro-impulses and fibre friction, both driven by stroke speed."""
+    t = t_axis(dur)
+    v = np.interp(t, times, speeds)
+    rate = (200 + 1400 * v) * (1 + 0.5 * norm(lp(noise(dur), 40)))
+    ticks = np.floor(np.cumsum(np.clip(rate, 0, None)) / SR)
+    imp = np.zeros_like(t)
+    idx = np.nonzero(np.diff(ticks, prepend=0))[0]
+    imp[idx] = _rng.uniform(0.3, 1.0, len(idx)) * v[idx]
+    grains = norm(bp(imp, 1800, 7000))
+    friction = norm(bp(noise(dur), 1200, 6000)) * v ** 1.3 * 0.35
+    body = norm(bp(noise(dur), 300, 900)) * v * 0.1
+    return norm((grains + friction + body) * env_ar(dur, 0.005, 0.02))
+
+
+def nib_tap():
+    """Nib touching the paper (a calligraphy dot)."""
+    t = t_axis(0.12)
+    return norm(bp(noise(0.12), 2000, 6000) * np.exp(-t * 400) + 0.5 * np.sin(2 * np.pi * 400 * t) * np.exp(-t * 120))
+
+
+def ink_drip():
+    """A single drop of ink landing on paper: a tiny rising 'plip' and a soft splat."""
+    t = t_axis(0.25)
+    f = 700 + 1300 * (1 - np.exp(-t * 40))
+    plip = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t * 35)
+    splat = lp(noise(0.25), 2500) * np.exp(-t * 60) * 0.3
+    return norm(plip + splat)
+
+
+def megaphone(x, sr_in):
+    """Voice through a bullhorn: pitched up for urgency, band-limited, driven into the horn, with a horn resonance."""
+    x = signal.resample_poly(x, SR, sr_in)
+    x = signal.resample_poly(x, 100, 112)  # ~+2 semitones, slightly faster
+    x = bp(x, 450, 3800, 4)
+    x = np.tanh(2.5 * norm(x))  # driven, but not so hard the consonants smear
+    return norm(x + 0.6 * bp(x, 1000, 1500))
