@@ -1,0 +1,47 @@
+{
+  "product_dna": "Product: AL MOHIB SAKINA S20, a premium slimline thermally-broken aluminium sliding window-door system. Floor-to-ceiling glass panels up to 3.5 m high, ultra-slim 20 mm vertical interlocks, matte black powder-coated aluminium frames with crisp machined edges, flush floor threshold, slim vertical integrated pull handle, large flawless low-iron double-glazed acoustic glass with subtle realistic reflections. Clean architectural minimalism. No visible text, no logos, no watermarks.",
+  "style": "Photorealistic high-end architectural product photography, shot on medium-format camera, natural physically accurate lighting, true-to-life materials, sharp focus, 8k detail, editorial luxury real-estate aesthetic, subtle film grain.",
+  "shots": [
+    {
+      "id": "01_hero_penthouse_golden_hour",
+      "aspect_ratio": "16:9",
+      "prompt": "Wide interior shot of a contemporary Riyadh high-rise penthouse living room at golden hour. A full wall of the sliding system spans the room, three panels closed. Through the glass, a hazy desert-city skyline with modern towers and busy highways far below. Inside: warm sand-coloured limestone floor, low cream sofa, olive tree in a stone planter, calm and serene. Warm sunlight rakes across the floor through the glass, long soft shadows. The frames read as thin precise black lines that barely interrupt the view."
+    },
+    {
+      "id": "02_studio_cutaway_profile",
+      "aspect_ratio": "16:9",
+      "prompt": "Studio product hero shot of a cut-away corner section of the sliding frame, displayed like a luxury object on a dark navy (#0A2F70) seamless gradient backdrop. The clean cross-section reveals the internal aluminium chambers, the polyamide thermal-break strips, triple black EPDM gaskets and the thick acoustic laminated double-glazed unit. Precise rim lighting in cool silver-blue outlines the machined edges, soft reflection on a glossy black floor. Apple-product-launch level of polish."
+    },
+    {
+      "id": "03_macro_interlock_seal",
+      "aspect_ratio": "16:9",
+      "prompt": "Extreme macro close-up of two glass sliding panels meeting at the slim black interlock at the exact moment they seal shut. Black EPDM gasket and fine brush-pile seal compressed, droplet-sharp detail, shallow depth of field, background a soft warm bokeh of a sunlit interior. Feeling of precision engineering and silence."
+    },
+    {
+      "id": "04_villa_courtyard_open",
+      "aspect_ratio": "16:9",
+      "prompt": "Modern Najdi-inspired villa in Saudi Arabia, earthy rammed-earth textured walls, internal courtyard with date palms, water feature and shaded seating. A four-panel corner sliding system is fully opened, panels stacked neatly, so the living room flows seamlessly into the courtyard with a flush threshold. Late afternoon light, warm and elegant."
+    },
+    {
+      "id": "05_contrast_noise_vs_calm",
+      "aspect_ratio": "16:9",
+      "prompt": "Split-world composition through one closed sliding glass panel: outside the glass, a chaotic blurred city scene with traffic, flashing police lights and a helicopter at dusk, rendered in cool desaturated teal tones; inside, in sharp focus, a woman in a soft linen outfit sits calmly on the floor meditating, bathed in warm golden light. The thin black frame divides the two worlds. Cinematic, anamorphic look."
+    },
+    {
+      "id": "06_endcard_background",
+      "aspect_ratio": "16:9",
+      "prompt": "Minimal premium backdrop for a TV commercial end card: a single tall black slim-framed sliding glass panel standing on the right third of the frame, softly lit, on a clean off-white to pale silver gradient studio background with a gentle navy glow at the floor. Large empty negative space on the left two-thirds for logo placement. Calm, elegant, no text."
+    },
+    {
+      "id": "07_vertical_social_hero",
+      "aspect_ratio": "9:16",
+      "prompt": "Vertical portrait shot from inside a calm minimalist bedroom looking out through a floor-to-ceiling slim black sliding window at a high-rise city at blue hour, one panel half open, sheer linen curtain moving gently, warm bedside lamp light inside."
+    },
+    {
+      "id": "08_branded_handle_detail",
+      "aspect_ratio": "4:5",
+      "use_logo_reference": true,
+      "prompt": "Close-up detail of the slim vertical pull handle on the black aluminium sliding frame. A small, discreet laser-etched version of the reference logo mark (the stylised letter A only, no text) on the handle's end cap, rendered subtly in tone-on-tone. Warm interior light, shallow depth of field. Use the attached image only as the logo reference."
+    }
+  ]
+}
